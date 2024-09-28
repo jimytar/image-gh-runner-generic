@@ -1,7 +1,7 @@
 # Base image
 FROM ghcr.io/actions/actions-runner:2.319.1
 # Update the package list and install required packages
-USER root  # Switch to root user for installation
+USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Switch back to the runner user
-USER runner  # Switch back to the 'runner' user
+USER runner
 
 # Install asdf and configure the environment
 RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1 \
