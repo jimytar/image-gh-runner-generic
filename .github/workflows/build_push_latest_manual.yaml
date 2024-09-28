@@ -28,6 +28,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Lint Dockerfile
+        uses: actions/checkout@v3
+        with:
+          dockerfile: Dockerfile
+
       - name: Docker Image Build
         run: |
           echo "Building New version of ${{ github.repository_name }} image...⌛"
@@ -35,22 +40,32 @@ jobs:
           echo "Adding COMMIT HASH Tag to the image...⌛"
           docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_HASH }}
 
-      - name: Bump version and push tag
-        id: version
-        uses: anothrNick/github-tag-action@1.71.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_WORKFLOWS_TOKEN }}
-          WITH_V: false
-          MAJOR_STRING_TOKEN: 'BREAKING CHANGE:'
-          MINOR_STRING_TOKEN: 'feat:'
-          PATCH_STRING_TOKEN: 'fix:'
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_HASH }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
 
-      - name: Docker Image Tag and Push to Repository
-        run: |
-          echo "Adding TAG version to ${{ github.repository_name }} image...⌛"
-          docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }}
+      # - name: Bump version and push tag
+      #   id: version
+      #   uses: anothrNick/github-tag-action@1.71.0
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GH_WORKFLOWS_TOKEN }}
+      #     WITH_V: false
+      #     MAJOR_STRING_TOKEN: 'BREAKING CHANGE:'
+      #     MINOR_STRING_TOKEN: 'feat:'
+      #     PATCH_STRING_TOKEN: 'fix:'
 
-          echo "Pushing New Image to Registry...⌛"
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --all-tags
+      # - name: Docker Image Tag and Push to Repository
+      #   run: |
+      #     echo "Adding TAG version to ${{ github.repository_name }} image...⌛"
+      #     docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }}
 
-          echo "${{ github.repository_name }} new image successfully pushed! ✅" 
+      #     echo "Pushing New Image to Registry...⌛"
+      #     docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --all-tags
+
+      #     echo "${{ github.repository_name }} new image successfully pushed! ✅" 
