@@ -32,6 +32,8 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
+          ignored:
+            - DL3008 # Ignore apt upgrade version locking
 
       - name: Docker Image Build
         run: |
