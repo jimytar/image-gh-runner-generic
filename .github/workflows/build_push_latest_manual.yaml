@@ -32,7 +32,7 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
-          ignore: DL3008
+          ignore: DL3008 # ignore apt install no version locking
 
       - name: Docker Image Build
         run: |
@@ -51,22 +51,22 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL'
 
-      # - name: Bump version and push tag
-      #   id: version
-      #   uses: anothrNick/github-tag-action@1.71.0
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GH_WORKFLOWS_TOKEN }}
-      #     WITH_V: false
-      #     MAJOR_STRING_TOKEN: 'BREAKING CHANGE:'
-      #     MINOR_STRING_TOKEN: 'feat:'
-      #     PATCH_STRING_TOKEN: 'fix:'
+      - name: Bump version and push tag
+        id: version
+        uses: anothrNick/github-tag-action@1.71.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_WORKFLOWS_TOKEN }}
+          WITH_V: false
+          MAJOR_STRING_TOKEN: 'BREAKING CHANGE:'
+          MINOR_STRING_TOKEN: 'feat:'
+          PATCH_STRING_TOKEN: 'fix:'
 
-      # - name: Docker Image Tag and Push to Repository
-      #   run: |
-      #     echo "Adding TAG version to ${{ github.repository_name }} image...⌛"
-      #     docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }}
+      - name: Docker Image Tag and Push to Repository
+        run: |
+          echo "Adding TAG version to ${{ github.repository_name }} image...⌛"
+          docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }}
 
-      #     echo "Pushing New Image to Registry...⌛"
-      #     docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --all-tags
+          echo "Pushing New Image to Registry...⌛"
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --all-tags
 
-      #     echo "${{ github.repository_name }} new image successfully pushed! ✅" 
+          echo "${{ github.repository_name }} new image successfully pushed! ✅" 

@@ -3,9 +3,9 @@ FROM debian:12.7-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG USER=runner
+ARG DOCKER_VERSION=27.3.1
 ARG RUNNER_VERSION=2.319.1
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.1
-ARG DOCKER_VERSION=27.3.1
 
 # Install required packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -41,7 +41,7 @@ RUN curl -fLo docker.tgz https://download.docker.com/linux/static/stable/x86_64/
     && install -o root -g root -m 755 docker/* /usr/bin/ \
     && rm -rf docker
 
-# Install GitHub Actions runner and container hooks
+# Install GitHub Actions runner and container hooks k8s
 RUN curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
     && tar xzf ./runner.tar.gz \
     && rm runner.tar.gz \
