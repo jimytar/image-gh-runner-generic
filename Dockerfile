@@ -22,7 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     gnupg \
     lsb-release \
-    software-properties-common
+    software-properties-common \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set up GitHub runner user
 RUN adduser --disabled-password --gecos "" --uid 1001 ${USER} \
