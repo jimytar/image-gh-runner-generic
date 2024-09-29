@@ -3,7 +3,6 @@ FROM debian:12.7-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG USER=runner
-ARG DOCKER_VERSION=27.3.1
 ARG RUNNER_VERSION=2.319.1
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.1
 ARG NODE=20.17.0
@@ -37,11 +36,17 @@ RUN adduser --disabled-password --gecos "" --uid 1001 ${USER} \
 WORKDIR /home/${USER}
 
 # Install Docker
-RUN curl -fLo docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz \
-    && tar zxvf docker.tgz \
-    && rm -rf docker.tgz \
-    && install -o root -g root -m 755 docker/* /usr/bin/ \
-    && rm -rf docker
+RUN mkdir -p /etc/apt/keyrings \
+    && chmod 0755 /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc \
+    && chmod a+r /etc/apt/keyrings/docker.asc \
+    && echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        tee /etc/apt/sources.list.d/docker.list > /dev/null \
+    && apt-get update \
+    && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install GitHub Actions runner and container hooks k8s
 RUN curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \

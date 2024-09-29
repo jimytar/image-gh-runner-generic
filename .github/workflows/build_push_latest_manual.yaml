@@ -67,6 +67,6 @@ jobs:
           docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }}
 
           echo "Pushing New Image to Registry...⌛"
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --all-tags
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }}
 
-          echo "${{ github.repository_name }} new image successfully pushed! ✅" 
+          echo "${{ github.repository_name }} new image successfully pushed! ✅"
