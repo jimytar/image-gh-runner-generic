@@ -64,3 +64,8 @@ ENV PATH="$ASDF_DIR/bin:$ASDF_DIR/shims:$PATH"
 RUN asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git \
     && asdf install nodejs 20.17.0 \
     && asdf global nodejs 20.17.0
+
+# Install terraform 1.9.5
+RUN asdf plugin add terraform https://github.com/asdf-community/asdf-hashicorp.git \
+    && asdf install terraform 1.9.6 \
+    && asdf global terraform 1.9.6
