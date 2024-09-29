@@ -22,8 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     gnupg \
     lsb-release \
-    software-properties-common \
-    && rm -rf /var/lib/apt/lists/*
+    software-properties-common
 
 # Set up GitHub runner user
 RUN adduser --disabled-password --gecos "" --uid 1001 ${USER} \
@@ -34,8 +33,6 @@ RUN adduser --disabled-password --gecos "" --uid 1001 ${USER} \
     && echo "Defaults env_keep += \"DEBIAN_FRONTEND\"" >> /etc/sudoers
 
 WORKDIR /home/${USER}
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Install Docker
 RUN curl -fsSL https://get.docker.com -o get-docker.sh \
