@@ -6,6 +6,8 @@ ARG USER=runner
 ARG DOCKER_VERSION=27.3.1
 ARG RUNNER_VERSION=2.319.1
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.1
+ARG NODE=20.17.0
+ARG TERRAFORM=1.9.6
 
 # Install required packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -60,12 +62,12 @@ RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1 \
 ENV ASDF_DIR="/home/${USER}/.asdf"
 ENV PATH="$ASDF_DIR/bin:$ASDF_DIR/shims:$PATH"
 
-# Install node 20.17.0
+# Install node
 RUN asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git \
-    && asdf install nodejs 20.17.0 \
-    && asdf global nodejs 20.17.0
+    && asdf install nodejs ${NODE} \
+    && asdf global nodejs ${NODE}
 
-# Install terraform 1.9.5
+# Install terraform
 RUN asdf plugin add terraform https://github.com/asdf-community/asdf-hashicorp.git \
-    && asdf install terraform 1.9.6 \
-    && asdf global terraform 1.9.6
+    && asdf install terraform ${TERRAFORM} \
+    && asdf global terraform ${TERRAFORM}
