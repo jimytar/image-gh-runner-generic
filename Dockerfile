@@ -6,7 +6,7 @@ ARG USER=runner
 ARG RUNNER_VERSION=2.319.1
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.1
 ARG NODE=20.17.0
-ARG TERRAFORM=1.9.6
+ARG TERRAFORM=1.9.8
 ARG USER=runner
 ARG KUBECTL=1.30.6
 ARG HELM=3.15.1
@@ -41,7 +41,7 @@ WORKDIR /home/${USER}
 
 # Install Docker
 RUN curl -fsSL https://get.docker.com -o get-docker.sh \
-    && sh get-docker.sh \
+    && sh get-docker.sh --version 27.3.1 \
     && rm -rf /var/lib/apt/lists/*
 
 
