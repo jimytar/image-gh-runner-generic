@@ -7,6 +7,10 @@ ARG RUNNER_VERSION=2.319.1
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.1
 ARG NODE=20.17.0
 ARG TERRAFORM=1.9.6
+ARG USER=runner
+ARG KUBECTL=1.30.6
+ARG HELM=3.15.1
+ARG PACKER=1.11.2
 
 # Install required packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -69,3 +73,18 @@ RUN asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git \
 RUN asdf plugin add terraform https://github.com/asdf-community/asdf-hashicorp.git \
     && asdf install terraform ${TERRAFORM} \
     && asdf global terraform ${TERRAFORM}
+
+# Install kubectl
+RUN asdf plugin add kubectl https://github.com/asdf-community/asdf-kubectl.git \
+    && asdf install kubectl ${KUBECTL} \
+    && asdf global kubectl ${KUBECTL}
+
+# Install Packer
+RUN asdf plugin add packer https://github.com/asdf-community/asdf-hashicorp.git \
+    && asdf install packer ${PACKER} \
+    && asdf global packer ${PACKER}
+
+# Install Helm
+RUN asdf plugin add helm https://github.com/Antiarchitect/asdf-helm.git \
+    && asdf install helm ${HELM} \
+    && asdf global helm ${HELM}
