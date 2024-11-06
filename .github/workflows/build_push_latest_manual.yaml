@@ -9,8 +9,8 @@ on:
 jobs:
   build-and-push:
     runs-on: truenas-runner-gh-runner
-    permissions:
-      contents: write
+    # permissions:
+    #   contents: write
       
     steps:
 
@@ -59,7 +59,7 @@ jobs:
         id: version
         uses: anothrNick/github-tag-action@1.71.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_WORKFLOWS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: false
           MAJOR_STRING_TOKEN: 'BREAKING CHANGE:'
           MINOR_STRING_TOKEN: 'feat:'
