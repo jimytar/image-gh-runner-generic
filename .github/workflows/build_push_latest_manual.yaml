@@ -9,8 +9,8 @@ on:
 jobs:
   build-and-push:
     runs-on: truenas-runner-gh-runner
-    # permissions:
-    #   contents: write
+    permissions:
+      contents: write
       
     steps:
 
