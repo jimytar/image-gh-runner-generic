@@ -40,9 +40,16 @@ RUN adduser --disabled-password --gecos "" --uid 1001 ${USER} \
 WORKDIR /home/${USER}
 
 # Install Docker
-RUN curl -fsSL https://get.docker.com -o get-docker.sh \
-    && sh get-docker.sh --version 27.3.1 \
-    && rm -rf /var/lib/apt/lists/*
+RUN sudo install -m 0755 -d /etc/apt/keyrings && \
+    sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
+    sudo chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    sudo apt update && \
+    sudo apt install -y docker-ce-cli docker-buildx-plugin docker-compose-plugin && \
+    rm -rf /var/lib/apt/lists/*
 
 
 # Install GitHub Actions runner and container hooks k8s
