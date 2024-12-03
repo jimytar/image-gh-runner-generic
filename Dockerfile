@@ -12,6 +12,8 @@ ARG KUBECTL=1.30.6
 ARG HELM=3.16.2
 ARG PACKER=1.11.2
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # Install required packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
@@ -45,10 +47,10 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
     chmod a+r /etc/apt/keyrings/docker.asc && \
     echo \
     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    $(source /etc/os-release && echo "$VERSION_CODENAME") stable" | \
     tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt update && \
-    apt install -y docker-ce-cli docker-buildx-plugin docker-compose-plugin && \
+    apt-get update && \
+    apt-get install -y docker-ce-cli docker-buildx-plugin docker-compose-plugin && \
     rm -rf /var/lib/apt/lists/*
 
 
