@@ -103,8 +103,3 @@ RUN asdf plugin add packer \
 RUN asdf plugin add helm \
     && asdf install helm ${HELM} \
     && asdf global helm ${HELM}
-
-# Install AWScli
-RUN asdf plugin add awscli \
-&& asdf install awscli ${AWS} \
-&& asdf global awscli ${AWS}
