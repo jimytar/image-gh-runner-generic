@@ -5,12 +5,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG USER=runner
 ARG RUNNER_VERSION=2.321.0
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.2
+ARG DOCKER_VERSION=27.4.0
+ARG DOCKER_COMPOSE_VERSION=2.31.0
 ARG NODE=20.17.0
 ARG TERRAFORM=1.9.8
 ARG USER=runner
 ARG KUBECTL=1.30.6
 ARG HELM=3.16.2
 ARG PACKER=1.11.2
+ARG AWS=2.23.12
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -45,12 +48,15 @@ WORKDIR /home/${USER}
 RUN install -m 0755 -d /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
     chmod a+r /etc/apt/keyrings/docker.asc && \
-    echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-    $(source /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-    tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    . /etc/os-release && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list && \
     apt-get update && \
-    apt-get install -y --no-install-recommends docker-ce-cli docker-buildx-plugin docker-compose-plugin && \
+    apt-get install -y --no-install-recommends \
+    docker-ce-cli=5:"${DOCKER_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME}" \
+    containerd.io \
+    docker-buildx-plugin \
+    docker-compose-plugin="${DOCKER_COMPOSE_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME}" && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -74,26 +80,31 @@ ENV ASDF_DIR="/home/${USER}/.asdf"
 ENV PATH="$ASDF_DIR/bin:$ASDF_DIR/shims:$PATH"
 
 # Install node
-RUN asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git \
+RUN asdf plugin add nodejs \
     && asdf install nodejs ${NODE} \
     && asdf global nodejs ${NODE}
 
 # Install terraform
-RUN asdf plugin add terraform https://github.com/asdf-community/asdf-hashicorp.git \
+RUN asdf plugin add terraform \
     && asdf install terraform ${TERRAFORM} \
     && asdf global terraform ${TERRAFORM}
 
 # Install kubectl
-RUN asdf plugin add kubectl https://github.com/asdf-community/asdf-kubectl.git \
+RUN asdf plugin add kubectl \
     && asdf install kubectl ${KUBECTL} \
     && asdf global kubectl ${KUBECTL}
 
 # Install Packer
-RUN asdf plugin add packer https://github.com/asdf-community/asdf-hashicorp.git \
+RUN asdf plugin add packer \
     && asdf install packer ${PACKER} \
     && asdf global packer ${PACKER}
 
 # Install Helm
-RUN asdf plugin add helm https://github.com/Antiarchitect/asdf-helm.git \
+RUN asdf plugin add helm \
     && asdf install helm ${HELM} \
     && asdf global helm ${HELM}
+
+# Install AWScli
+RUN asdf plugin add awscli \
+&& asdf install awscli ${AWS} \
+&& asdf global awscli ${AWS}
