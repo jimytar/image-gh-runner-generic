@@ -50,13 +50,13 @@ RUN mkdir -m 0755 -p /etc/apt/keyrings && \
     chmod a+r /etc/apt/keyrings/docker.asc && \
     . /etc/os-release && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-    $(echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list && \
+    $(echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-    docker-ce-cli=5:${DOCKER_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME} \
+    docker-ce-cli=5:"${DOCKER_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME}" \
     containerd.io \
     docker-buildx-plugin \
-    docker-compose-plugin=${DOCKER_COMPOSE_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME} && \
+    docker-compose-plugin="${DOCKER_COMPOSE_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME}" && \
     rm -rf /var/lib/apt/lists/*
 
 
