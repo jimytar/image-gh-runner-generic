@@ -13,6 +13,7 @@ ARG USER=runner
 ARG KUBECTL=1.30.6
 ARG HELM=3.16.2
 ARG PACKER=1.11.2
+ARG AWS=2.23.12
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -79,26 +80,31 @@ ENV ASDF_DIR="/home/${USER}/.asdf"
 ENV PATH="$ASDF_DIR/bin:$ASDF_DIR/shims:$PATH"
 
 # Install node
-RUN asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git \
+RUN asdf plugin add nodejs \
     && asdf install nodejs ${NODE} \
     && asdf global nodejs ${NODE}
 
 # Install terraform
-RUN asdf plugin add terraform https://github.com/asdf-community/asdf-hashicorp.git \
+RUN asdf plugin add terraform \
     && asdf install terraform ${TERRAFORM} \
     && asdf global terraform ${TERRAFORM}
 
 # Install kubectl
-RUN asdf plugin add kubectl https://github.com/asdf-community/asdf-kubectl.git \
+RUN asdf plugin add kubectl \
     && asdf install kubectl ${KUBECTL} \
     && asdf global kubectl ${KUBECTL}
 
 # Install Packer
-RUN asdf plugin add packer https://github.com/asdf-community/asdf-hashicorp.git \
+RUN asdf plugin add packer \
     && asdf install packer ${PACKER} \
     && asdf global packer ${PACKER}
 
 # Install Helm
-RUN asdf plugin add helm https://github.com/Antiarchitect/asdf-helm.git \
+RUN asdf plugin add helm \
     && asdf install helm ${HELM} \
     && asdf global helm ${HELM}
+
+# Install AWScli
+RUN asdf plugin add awscli \
+&& asdf install awscli ${AWS} \
+&& asdf global awscli ${AWS}
