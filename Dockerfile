@@ -3,7 +3,7 @@ FROM debian:12.7-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG USER=runner
-ARG RUNNER_VERSION=2.321.0
+ARG RUNNER_VERSION=2.322.0
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.2
 ARG DOCKER_VERSION=27.4.0
 ARG DOCKER_COMPOSE_VERSION=2.31.0
@@ -12,8 +12,6 @@ ARG TERRAFORM=1.9.8
 ARG USER=runner
 ARG KUBECTL=1.30.6
 ARG HELM=3.16.2
-ARG PACKER=1.11.2
-ARG AWS=2.23.12
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -94,17 +92,7 @@ RUN asdf plugin add kubectl \
     && asdf install kubectl ${KUBECTL} \
     && asdf global kubectl ${KUBECTL}
 
-# Install Packer
-RUN asdf plugin add packer \
-    && asdf install packer ${PACKER} \
-    && asdf global packer ${PACKER}
-
 # Install Helm
 RUN asdf plugin add helm \
     && asdf install helm ${HELM} \
     && asdf global helm ${HELM}
-
-# Install AWScli
-RUN asdf plugin add awscli \
-&& asdf install awscli ${AWS} \
-&& asdf global awscli ${AWS}
