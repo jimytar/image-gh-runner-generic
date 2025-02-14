@@ -12,8 +12,6 @@ ARG TERRAFORM=1.9.8
 ARG USER=runner
 ARG KUBECTL=1.30.6
 ARG HELM=3.16.2
-ARG PACKER=1.11.2
-ARG AWS=2.23.12
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -93,11 +91,6 @@ RUN asdf plugin add terraform \
 RUN asdf plugin add kubectl \
     && asdf install kubectl ${KUBECTL} \
     && asdf global kubectl ${KUBECTL}
-
-# Install Packer
-RUN asdf plugin add packer \
-    && asdf install packer ${PACKER} \
-    && asdf global packer ${PACKER}
 
 # Install Helm
 RUN asdf plugin add helm \
