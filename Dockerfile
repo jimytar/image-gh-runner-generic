@@ -30,6 +30,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     lsb-release \
     software-properties-common \
+    python3-full \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up GitHub runner user
