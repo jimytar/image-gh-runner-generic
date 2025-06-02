@@ -11,8 +11,8 @@ on:
 jobs:
   build-and-push:
     runs-on: gh-runner-image-runner
-    permissions:
-      contents: write
+    # permissions:
+    #   contents: write
       
     steps:
 
