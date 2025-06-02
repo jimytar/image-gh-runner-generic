@@ -2,7 +2,6 @@ FROM debian:12.7-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-
 ARG USER=runner
 ARG RUNNER_VERSION=2.324.0
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.2
@@ -59,7 +58,6 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
     docker-buildx-plugin \
     docker-compose-plugin="${DOCKER_COMPOSE_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME}" && \
     rm -rf /var/lib/apt/lists/*
-
 
 # Install GitHub Actions runner and container hooks k8s
 RUN curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
