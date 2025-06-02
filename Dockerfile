@@ -59,7 +59,6 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
     docker-compose-plugin="${DOCKER_COMPOSE_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME}" && \
     rm -rf /var/lib/apt/lists/*
 
-
 # Install GitHub Actions runner and container hooks k8s
 RUN curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
     && tar xzf ./runner.tar.gz \
