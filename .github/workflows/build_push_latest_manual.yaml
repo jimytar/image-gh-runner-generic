@@ -79,13 +79,16 @@ jobs:
           
           echo "${{ github.repository_name }} new image successfully pushed! ✅"
 
-      - name: Create Release
-        id: create_release
-        uses: ncipollo/release-action@v1
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag: ${{ steps.version.outputs.new_tag }}
-          draft: false
-          prerelease: false
-          generateReleaseNotes: true
+          outputFile: INFRA_CHANGELOG.md
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.service }}-${{ github.event.inputs.version }}
+          body: ${{steps.github_release.outputs.changelog}}
