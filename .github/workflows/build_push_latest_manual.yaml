@@ -85,7 +85,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          outputFile: INFRA_CHANGELOG.md
+          mode: HYBRID
 
       - name: Release
         uses: softprops/action-gh-release@v2
