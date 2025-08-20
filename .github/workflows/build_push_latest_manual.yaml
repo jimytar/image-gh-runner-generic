@@ -39,12 +39,12 @@ jobs:
           dockerfile: Dockerfile
           ignore: DL3008,SC1091 # Ignore apt install no version locking, and shellcheck.
 
-      # - name: Docker Image Build
-      #   run: |
-      #     echo "Building New version of ${{ github.repository_name }} image...⌛"
-      #     docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest .
-      #     echo "Adding COMMIT HASH Tag to the image...⌛"
-      #     docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_HASH }}
+      - name: Docker Image Build
+        run: |
+          echo "Building New version of ${{ github.repository_name }} image...⌛"
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest .
+          echo "Adding COMMIT HASH Tag to the image...⌛"
+          docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_HASH }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.29.0
@@ -67,17 +67,17 @@ jobs:
           MINOR_STRING_TOKEN: 'feat:'
           PATCH_STRING_TOKEN: 'fix:'
 
-      # - name: Docker Image Tag and Push to Repository
-      #   run: |
-      #     echo "Adding TAG version to ${{ github.repository_name }} image...⌛"
-      #     docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }}
+      - name: Docker Image Tag and Push to Repository
+        run: |
+          echo "Adding TAG version to ${{ github.repository_name }} image...⌛"
+          docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }}
 
-      #     echo "Pushing New Image to Registry...⌛"
-      #     docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest &
-      #     docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }} &
-      #     wait
+          echo "Pushing New Image to Registry...⌛"
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest &
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }} &
+          wait
           
-      #     echo "${{ github.repository_name }} new image successfully pushed! ✅"
+          echo "${{ github.repository_name }} new image successfully pushed! ✅"
 
       - name: Build Changelog
         id: github_release
