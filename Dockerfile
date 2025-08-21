@@ -28,6 +28,7 @@ RUN apt update && apt install -y --no-install-recommends \
     gnupg \
     python3-pip \
     python3-venv \
+    libicu-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up GitHub runner user
