@@ -14,7 +14,7 @@ ARG HELM=3.18.6
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Install required packages
-RUN apt update && apt install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
     curl \
     wget \
@@ -69,8 +69,8 @@ USER ${USER}
 
 # Install asdf and configure the environment
 RUN curl -L https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz \
-    | sudo tar -xz -C /usr/local/bin \
-    && sudo chmod +x /usr/local/bin/asdf
+    | gosu root tar -xz -C /usr/local/bin \
+    && gosu root chmod +x /usr/local/bin/asdf
 
 ENV PATH="/home/${USER}/.asdf/shims:/usr/local/bin:${PATH}"
 
