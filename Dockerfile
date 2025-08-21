@@ -1,11 +1,11 @@
-FROM debian:12.7-slim
+FROM debian:13.0-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG USER=runner
 ARG RUNNER_VERSION=2.328.0
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.7.0
-ARG DOCKER_VERSION=27.4.0
-ARG DOCKER_COMPOSE_VERSION=2.31.0
+ARG DOCKER_VERSION=28.3.3
+ARG DOCKER_COMPOSE_VERSION=2.39.1
 ARG NODE=20.17.0
 ARG TERRAFORM=1.13.0
 ARG USER=runner
@@ -15,7 +15,7 @@ ARG HELM=3.18.6
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Install required packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt update && apt install -y --no-install-recommends \
     sudo \
     curl \
     wget \
@@ -27,9 +27,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rsync \
     ca-certificates \
     gnupg \
-    lsb-release \
-    software-properties-common \
-    python3-full \
+    python3-pip \
     python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
@@ -70,29 +68,26 @@ RUN curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download
 USER ${USER}
 
 # Install asdf and configure the environment
-RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1 \
-    && echo ". $HOME/.asdf/asdf.sh" >> ~/.bashrc \
-    && echo ". $HOME/.asdf/completions/asdf.bash" >> ~/.bashrc
-
-ENV ASDF_DIR="/home/${USER}/.asdf"
-ENV PATH="$ASDF_DIR/bin:$ASDF_DIR/shims:$PATH"
+RUN curl -L https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz \
+    | sudo tar -xz -C /usr/local/bin \
+    && sudo chmod +x /usr/local/bin/asdf
 
 # Install node
 RUN asdf plugin add nodejs \
     && asdf install nodejs ${NODE} \
-    && asdf global nodejs ${NODE}
+    && asdf set -u nodejs ${NODE}
 
 # Install terraform
 RUN asdf plugin add terraform \
     && asdf install terraform ${TERRAFORM} \
-    && asdf global terraform ${TERRAFORM}
+    && asdf set -u terraform ${TERRAFORM}
 
 # Install Helm
 RUN asdf plugin add helm \
     && asdf install helm ${HELM} \
-    && asdf global helm ${HELM}
+    && asdf set -u helm ${HELM}
 
 # Install kubectl
 RUN asdf plugin add kubectl \
     && asdf install kubectl ${KUBECTL} \
-    && asdf global kubectl ${KUBECTL}
+    && asdf set -u kubectl ${KUBECTL}
