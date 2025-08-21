@@ -42,7 +42,7 @@ jobs:
       - name: Docker Image Build
         run: |
           echo "Building New version of ${{ github.repository_name }} image...⌛"
-          docker buildx build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest .
+          docker buildx build --network host -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest .
           echo "Adding COMMIT HASH Tag to the image...⌛"
           docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_HASH }}
 
