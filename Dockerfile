@@ -87,12 +87,12 @@ RUN asdf plugin add terraform \
     && asdf install terraform ${TERRAFORM} \
     && asdf global terraform ${TERRAFORM}
 
-# Install kubectl
-RUN asdf plugin add kubectl \
-    && asdf install kubectl ${KUBECTL} \
-    && asdf global kubectl ${KUBECTL}
-
 # Install Helm
 RUN asdf plugin add helm \
     && asdf install helm ${HELM} \
     && asdf global helm ${HELM}
+
+# Install kubectl
+RUN asdf plugin add kubectl \
+    && asdf install kubectl ${KUBECTL} \
+    && asdf global kubectl ${KUBECTL}
