@@ -2,13 +2,12 @@ FROM debian:13.0-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG USER=runner
-ARG RUNNER_VERSION=2.328.0
-ARG RUNNER_CONTAINER_HOOKS_VERSION=0.7.0
 ARG DOCKER_VERSION=28.3.3
 ARG DOCKER_COMPOSE_VERSION=2.39.1
+ARG RUNNER_VERSION=2.328.0
+ARG RUNNER_CONTAINER_HOOKS_VERSION=0.7.0
 ARG NODE=20.17.0
 ARG TERRAFORM=1.13.0
-ARG USER=runner
 ARG KUBECTL=1.33.3
 ARG HELM=3.18.6
 
@@ -71,6 +70,8 @@ USER ${USER}
 RUN curl -L https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz \
     | sudo tar -xz -C /usr/local/bin \
     && sudo chmod +x /usr/local/bin/asdf
+
+ENV PATH="/home/${USER}/.asdf/shims:/usr/local/bin:${PATH}"
 
 # Install node
 RUN asdf plugin add nodejs \
