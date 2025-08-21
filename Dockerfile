@@ -46,14 +46,14 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
     chmod a+r /etc/apt/keyrings/docker.asc && \
     . /etc/os-release && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-    $(echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $VERSION_CODENAME stable" \
+    > /etc/apt/sources.list.d/docker.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-    docker-ce-cli=5:"${DOCKER_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME}" \
-    containerd.io \
-    docker-buildx-plugin \
-    docker-compose-plugin="${DOCKER_COMPOSE_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME}" && \
+        docker-ce-cli=5:"${DOCKER_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME}" \
+        containerd.io \
+        docker-buildx-plugin \
+        docker-compose-plugin="${DOCKER_COMPOSE_VERSION}-1~${ID}.${VERSION_ID}~${VERSION_CODENAME}" && \
     rm -rf /var/lib/apt/lists/*
 
 # Install GitHub Actions runner and container hooks k8s
@@ -64,13 +64,13 @@ RUN curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download
     && unzip ./runner-container-hooks.zip -d ./k8s \
     && rm runner-container-hooks.zip
 
-# Switch to the runner user
-USER ${USER}
-
 # Install asdf and configure the environment
 RUN curl -L https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz \
-    | gosu root tar -xz -C /usr/local/bin \
-    && gosu root chmod +x /usr/local/bin/asdf
+    | tar -xz -C /usr/local/bin \
+    && chmod +x /usr/local/bin/asdf
+
+# Switch to the runner user
+USER ${USER}
 
 ENV PATH="/home/${USER}/.asdf/shims:/usr/local/bin:${PATH}"
 
