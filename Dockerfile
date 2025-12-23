@@ -92,12 +92,12 @@ RUN asdf plugin add terragrunt \
     && asdf install terragrunt ${TERRAGRUNT} \
     && asdf set -u terragrunt ${TERRAGRUNT}
 
-# Install Helm
-RUN asdf plugin add helm \
-    && asdf install helm ${HELM} \
-    && asdf set -u helm ${HELM}
-
 # Install kubectl
 RUN asdf plugin add kubectl \
     && asdf install kubectl ${KUBECTL} \
     && asdf set -u kubectl ${KUBECTL}
+
+# Install Helm
+RUN asdf plugin add helm \
+    && asdf install helm ${HELM} \
+    && asdf set -u helm ${HELM}
