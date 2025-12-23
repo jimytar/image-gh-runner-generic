@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     make \
     python3-pip \
     python3-venv \
-    # libicu-dev \
+    libicu-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up GitHub runner user
