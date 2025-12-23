@@ -8,6 +8,7 @@ ARG RUNNER_VERSION=2.330.0
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.8.0
 ARG NODE=20.17.0
 ARG TERRAFORM=1.14.2
+ARG TERRAGRUNT=0.96.1
 ARG KUBECTL=1.34.2
 ARG HELM=3.19.4
 
@@ -15,9 +16,10 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Install required packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    sudo \
+    # sudo \
     curl \
     wget \
+    ssh \
     git \
     unzip \
     jq \
@@ -26,6 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rsync \
     ca-certificates \
     gnupg \
+    make \
     python3-pip \
     python3-venv \
     libicu-dev \
@@ -34,9 +37,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set up GitHub runner user
 RUN adduser --disabled-password --gecos "" --uid 1001 ${USER} \
     && groupadd docker --gid 123 \
-    && usermod -aG sudo ${USER} \
+    # && usermod -aG sudo ${USER} \
     && usermod -aG docker ${USER} \
-    && echo "%sudo   ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers \
+    # && echo "%sudo   ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers \
     && echo "Defaults env_keep += \"DEBIAN_FRONTEND\"" >> /etc/sudoers
 
 WORKDIR /home/${USER}
@@ -83,6 +86,11 @@ RUN asdf plugin add nodejs \
 RUN asdf plugin add terraform \
     && asdf install terraform ${TERRAFORM} \
     && asdf set -u terraform ${TERRAFORM}
+
+# Install terragrunt
+RUN asdf plugin add terragrunt \
+    && asdf install terragrunt ${TERRAGRUNT} \
+    && asdf set -u terragrunt ${TERRAGRUNT}
 
 # Install Helm
 RUN asdf plugin add helm \
