@@ -17,7 +17,7 @@ jobs:
     steps:
 
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: '0'
           ref: ${{ github.sha }}
@@ -28,13 +28,13 @@ jobs:
           echo "IMAGE_NAME=$(echo "${{ github.repository }}" | awk -F/ '{gsub(/^image-/, "", $2); print $2}')" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Lint Dockerfile
-        uses: hadolint/hadolint-action@v3.1.0
+        uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: Dockerfile
           ignore: DL3008,SC1091 # Ignore apt install no version locking, and shellcheck.
@@ -47,7 +47,7 @@ jobs:
           docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_HASH }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@v0.33.1
         with:
           image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_HASH }}'
           format: 'table'
@@ -59,13 +59,14 @@ jobs:
 
       - name: Bump version and push tag
         id: version
-        uses: anothrNick/github-tag-action@1.71.0
+        uses: anothrNick/github-tag-action@1.75.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: false
           MAJOR_STRING_TOKEN: 'BREAKING CHANGE:'
           MINOR_STRING_TOKEN: 'feat:'
           PATCH_STRING_TOKEN: 'fix:'
+          DEFAULT_BUMP: 'patch'
 
       - name: Docker Image Tag and Push to Repository
         run: |
