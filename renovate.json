@@ -1,0 +1,78 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":docker",
+    ":semanticCommits"
+  ],
+  "dockerfile": true,
+  "major": {
+    "enabled": true
+  },
+  "minor": {
+    "enabled": true
+  },
+  "patch": {
+    "enabled": true
+  },
+  "digest": {
+    "enabled": true
+  },
+  "postUpdateOptions": [
+    "gomodTidy",
+    "npmDedupe",
+    "yarnDedupeHighest"
+  ],
+  "ignoreDeps": [],
+  "ignorePaths": [],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["Dockerfile$"],
+      "matchStrings": [
+        "ARG (?<depName>DOCKER_VERSION)=(?<currentValue>.*?)\\n",
+        "ARG (?<depName>DOCKER_COMPOSE_VERSION)=(?<currentValue>.*?)\\n",
+        "ARG (?<depName>RUNNER_VERSION)=(?<currentValue>.*?)\\n",
+        "ARG (?<depName>RUNNER_CONTAINER_HOOKS_VERSION)=(?<currentValue>.*?)\\n",
+        "ARG (?<depName>NODE)=(?<currentValue>.*?)\\n",
+        "ARG (?<depName>TERRAFORM)=(?<currentValue>.*?)\\n",
+        "ARG (?<depName>TERRAGRUNT)=(?<currentValue>.*?)\\n",
+        "ARG (?<depName>KUBECTL)=(?<currentValue>.*?)\\n",
+        "ARG (?<depName>HELM)=(?<currentValue>.*?)\\n"
+      ],
+      "datasourceTemplate": "github-releases"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "matchPackagePatterns": ["NODE"],
+      "groupName": "Node.js",
+      "schedule": ["before 3am on Monday"]
+    },
+    {
+      "matchPackagePatterns": ["TERRAFORM", "TERRAGRUNT"],
+      "groupName": "Infrastructure Tools",
+      "schedule": ["before 3am on Monday"]
+    },
+    {
+      "matchPackagePatterns": ["KUBECTL", "HELM"],
+      "groupName": "Kubernetes Tools",
+      "schedule": ["before 3am on Monday"]
+    },
+    {
+      "matchPackagePatterns": ["DOCKER", "RUNNER"],
+      "groupName": "Docker & GitHub Runner",
+      "schedule": ["before 3am on Monday"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
+  "prConcurrentLimit": 2,
+  "semanticCommits": "enabled"
+}
