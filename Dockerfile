@@ -9,7 +9,7 @@ ARG RUNNER_CONTAINER_HOOKS_VERSION=0.8.1
 ARG NODE=20.17.0
 ARG TERRAFORM=1.14.2
 ARG TERRAGRUNT=0.96.1
-ARG KUBECTL=1.34.2
+ARG KUBECTL=1.36.2
 ARG HELM=3.19.4
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -101,4 +101,3 @@ RUN asdf plugin add kubectl \
 RUN asdf plugin add helm \
     && asdf install helm ${HELM} \
     && asdf set -u helm ${HELM}
-
