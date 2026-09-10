@@ -13,7 +13,7 @@
   "assignees": [
     "jimytar"
   ],
-  "prConcurrentLimit": 4,
+  "prConcurrentLimit": 10,
   "enabledManagers": [
     "dockerfile",
     "github-actions",
@@ -33,6 +33,16 @@
     }
   ],
   "packageRules": [
+    {
+      "description": "Docker CLI and Compose are apt pins, so the apt index is the source of truth - moby/moby releases are only a proxy and provably miss shipped versions (28.4.0, 28.5.0-28.5.2 have no moby tag at all) while adding RCs. NOTE: suite=trixie must be bumped in step with the FROM line in the Dockerfile. extractVersion strips the epoch and Debian revision (5:29.8.0-1~debian.13~trixie -> 29.8.0); the epoch group is optional because docker-ce-cli has one and docker-compose-plugin does not.",
+      "matchDatasources": [
+        "deb"
+      ],
+      "registryUrls": [
+        "https://download.docker.com/linux/debian?suite=trixie&components=stable&binaryArch=amd64"
+      ],
+      "extractVersion": "^(?:\\d+:)?(?<version>[^-]+)"
+    },
     {
       "description": "Renovate itself needs Node >= 24, so keep the runner's Node on a current LTS line",
       "matchDatasources": [
@@ -56,8 +66,8 @@
     },
     {
       "matchPackageNames": [
-        "moby/moby",
-        "docker/compose",
+        "docker-ce-cli",
+        "docker-compose-plugin",
         "actions/runner",
         "actions/runner-container-hooks"
       ],
@@ -103,5 +113,6 @@
     "enabled": true
   },
   "ignoreDeps": [],
-  "ignorePaths": []
+  "ignorePaths": [],
+  "prHourlyLimit": 0
 }
