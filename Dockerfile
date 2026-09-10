@@ -2,14 +2,27 @@ FROM debian:trixie-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG USER=runner
+# renovate: datasource=github-releases depName=moby/moby extractVersion=^docker-v(?<version>.*)$
 ARG DOCKER_VERSION=29.1.3
+# renovate: datasource=github-releases depName=docker/compose extractVersion=^v(?<version>.*)$
 ARG DOCKER_COMPOSE_VERSION=5.0.0
+# renovate: datasource=github-releases depName=actions/runner extractVersion=^v(?<version>.*)$
 ARG RUNNER_VERSION=2.336.0
+# renovate: datasource=github-releases depName=actions/runner-container-hooks extractVersion=^v(?<version>.*)$
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.8.1
-ARG NODE=20.17.0
+# renovate: datasource=node-version depName=node
+ARG NODE=24.21.0
+# renovate: datasource=npm depName=renovate
+ARG RENOVATE=44.79.2
+# renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
 ARG TERRAFORM=1.14.2
+# renovate: datasource=github-releases depName=gruntwork-io/terragrunt extractVersion=^v(?<version>.*)$
 ARG TERRAGRUNT=0.96.1
+# renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
 ARG KUBECTL=1.36.2
+# renovate: datasource=github-releases depName=asdf-vm/asdf extractVersion=^v(?<version>.*)$
+ARG ASDF=0.18.0
+# renovate: datasource=github-releases depName=helm/helm extractVersion=^v(?<version>.*)$
 ARG HELM=3.19.4
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -68,7 +81,7 @@ RUN curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download
     && rm runner-container-hooks.zip
 
 # Install asdf and configure the environment
-RUN curl -L https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz \
+RUN curl -L https://github.com/asdf-vm/asdf/releases/download/v${ASDF}/asdf-v${ASDF}-linux-amd64.tar.gz \
     | tar -xz -C /usr/local/bin \
     && chmod +x /usr/local/bin/asdf
 
@@ -81,6 +94,13 @@ ENV PATH="/home/${USER}/.asdf/shims:/usr/local/bin:${PATH}"
 RUN asdf plugin add nodejs \
     && asdf install nodejs ${NODE} \
     && asdf set -u nodejs ${NODE}
+
+# Install Renovate. Baked in rather than pulled as a container per job: the
+# runner image is cached by kubelet per node, whereas the dind sidecar has no
+# persistent /var/lib/docker and would re-pull ~1.2GB on every run.
+RUN npm install -g --omit=dev renovate@${RENOVATE} \
+    && asdf reshim nodejs \
+    && renovate --version
 
 # Install terraform
 RUN asdf plugin add terraform \

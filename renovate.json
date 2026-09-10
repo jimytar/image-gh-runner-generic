@@ -1,78 +1,64 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    ":docker",
-    ":semanticCommits"
-  ],
-  "dockerfile": true,
-  "major": {
-    "enabled": true
-  },
-  "minor": {
-    "enabled": true
-  },
-  "patch": {
-    "enabled": true
-  },
-  "digest": {
-    "enabled": true
-  },
-  "postUpdateOptions": [
-    "gomodTidy",
-    "npmDedupe",
-    "yarnDedupeHighest"
-  ],
-  "ignoreDeps": [],
-  "ignorePaths": [],
+  "extends": ["config:recommended", ":semanticCommits", ":dependencyDashboard"],
+  "timezone": "Europe/Sofia",
+  "schedule": ["before 3am on monday"],
+  "labels": ["dependencies", "renovate"],
+  "assignees": ["jimytar"],
+  "prConcurrentLimit": 4,
+
+  "enabledManagers": ["dockerfile", "github-actions", "custom.regex"],
+
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["Dockerfile$"],
+      "description": "Tool versions pinned as ARGs, resolved via the '# renovate:' comment above each",
+      "managerFilePatterns": ["/(^|/)Dockerfile$/"],
       "matchStrings": [
-        "ARG (?<depName>DOCKER_VERSION)=(?<currentValue>.*?)\\n",
-        "ARG (?<depName>DOCKER_COMPOSE_VERSION)=(?<currentValue>.*?)\\n",
-        "ARG (?<depName>RUNNER_VERSION)=(?<currentValue>.*?)\\n",
-        "ARG (?<depName>RUNNER_CONTAINER_HOOKS_VERSION)=(?<currentValue>.*?)\\n",
-        "ARG (?<depName>NODE)=(?<currentValue>.*?)\\n",
-        "ARG (?<depName>TERRAFORM)=(?<currentValue>.*?)\\n",
-        "ARG (?<depName>TERRAGRUNT)=(?<currentValue>.*?)\\n",
-        "ARG (?<depName>KUBECTL)=(?<currentValue>.*?)\\n",
-        "ARG (?<depName>HELM)=(?<currentValue>.*?)\\n"
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?\\s+ARG \\S+=\"?(?<currentValue>[^\"\\s]+)\"?"
       ],
-      "datasourceTemplate": "github-releases"
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ],
+
   "packageRules": [
     {
-      "matchDatasources": ["docker"],
+      "description": "Renovate itself needs Node >= 24, so keep the runner's Node on a current LTS line",
+      "matchDatasources": ["node-version"],
+      "groupName": "Node.js"
+    },
+    {
+      "matchPackageNames": ["hashicorp/terraform", "gruntwork-io/terragrunt"],
+      "groupName": "Infrastructure Tools"
+    },
+    {
+      "matchPackageNames": ["kubernetes/kubernetes", "helm/helm"],
+      "groupName": "Kubernetes Tools"
+    },
+    {
+      "matchPackageNames": [
+        "moby/moby",
+        "docker/compose",
+        "actions/runner",
+        "actions/runner-container-hooks"
+      ],
+      "groupName": "Docker & GitHub Runner"
+    },
+    {
+      "description": "Major bumps of the toolchain change build behaviour - always review by hand",
+      "matchUpdateTypes": ["major"],
+      "labels": ["dependencies", "renovate", "breaking-change"],
+      "commitMessagePrefix": "feat!:"
+    },
+    {
+      "description": "Base image majors (debian) are a deliberate decision, not a routine bump",
+      "matchManagers": ["dockerfile"],
       "matchUpdateTypes": ["major"],
       "enabled": false
-    },
-    {
-      "matchPackagePatterns": ["NODE"],
-      "groupName": "Node.js",
-      "schedule": ["before 3am on Monday"]
-    },
-    {
-      "matchPackagePatterns": ["TERRAFORM", "TERRAGRUNT"],
-      "groupName": "Infrastructure Tools",
-      "schedule": ["before 3am on Monday"]
-    },
-    {
-      "matchPackagePatterns": ["KUBECTL", "HELM"],
-      "groupName": "Kubernetes Tools",
-      "schedule": ["before 3am on Monday"]
-    },
-    {
-      "matchPackagePatterns": ["DOCKER", "RUNNER"],
-      "groupName": "Docker & GitHub Runner",
-      "schedule": ["before 3am on Monday"]
     }
   ],
-  "vulnerabilityAlerts": {
-    "enabled": true
-  },
-  "prConcurrentLimit": 2,
-  "semanticCommits": "enabled"
+
+  "vulnerabilityAlerts": { "enabled": true },
+  "ignoreDeps": [],
+  "ignorePaths": []
 }
