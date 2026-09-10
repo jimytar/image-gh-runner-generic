@@ -34,7 +34,16 @@ jobs:
       # step - Renovate clones the repo itself.
       - name: Run Renovate
         env:
+          # Renovate holds whole registry payloads in memory (bitnami's helm
+          # index.yaml is ~26MB of YAML). Node's default heap is ~half the
+          # container limit, which OOM-killed it. Scoped to this step so other
+          # Actions keep the default.
+          NODE_OPTIONS: --max-old-space-size=3072
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          # Without this Renovate falls back to renovate@whitesourcesoftware.com,
+          # a Mend-owned account with Vigilant Mode on, which flags every commit
+          # as Unverified.
+          RENOVATE_GIT_AUTHOR: 'jimytar <182091400+jimytar@users.noreply.github.com>'
           # github-releases/npm lookups are rate-limited without this.
           GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           RENOVATE_REPOSITORIES: ${{ github.repository }}
