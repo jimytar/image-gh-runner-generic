@@ -21,7 +21,7 @@ ARG TERRAGRUNT=0.96.1
 # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
 ARG KUBECTL=1.36.2
 # renovate: datasource=github-releases depName=asdf-vm/asdf extractVersion=^v(?<version>.*)$
-ARG ASDF=0.18.0
+ARG ASDF=0.20.0
 # renovate: datasource=github-releases depName=helm/helm extractVersion=^v(?<version>.*)$
 ARG HELM=3.19.4
 
