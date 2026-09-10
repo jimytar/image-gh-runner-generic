@@ -30,7 +30,7 @@ jobs:
       last_tag: ${{ steps.check.outputs.last_tag }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # Full history + tags: git describe needs them to find the last release.
           fetch-depth: '0'
@@ -64,7 +64,7 @@ jobs:
     steps:
 
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: '0'
           ref: ${{ github.sha }}
@@ -129,14 +129,14 @@ jobs:
 
       - name: Build Changelog
         id: github_release
-        uses: mikepenz/release-changelog-builder-action@v5
+        uses: mikepenz/release-changelog-builder-action@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           mode: HYBRID
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.version.outputs.new_tag }}
           body: ${{steps.github_release.outputs.changelog}}
