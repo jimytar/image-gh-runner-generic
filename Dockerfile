@@ -15,7 +15,7 @@ ARG NODE=24.21.0
 # renovate: datasource=github-releases depName=renovatebot/renovate
 ARG RENOVATE=44.79.2
 # renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
-ARG TERRAFORM=1.14.2
+ARG TERRAFORM=1.16.2
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt extractVersion=^v(?<version>.*)$
 ARG TERRAGRUNT=1.1.4
 # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
