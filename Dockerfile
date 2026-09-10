@@ -17,13 +17,13 @@ ARG RENOVATE=44.79.2
 # renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
 ARG TERRAFORM=1.16.2
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt extractVersion=^v(?<version>.*)$
-ARG TERRAGRUNT=0.99.5
+ARG TERRAGRUNT=1.1.4
 # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
 ARG KUBECTL=1.36.2
 # renovate: datasource=github-releases depName=asdf-vm/asdf extractVersion=^v(?<version>.*)$
 ARG ASDF=0.18.0
 # renovate: datasource=github-releases depName=helm/helm extractVersion=^v(?<version>.*)$
-ARG HELM=3.19.4
+ARG HELM=4.3.0
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
