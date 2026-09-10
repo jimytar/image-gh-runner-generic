@@ -2,9 +2,11 @@ name: Renovate
 
 on:
   schedule:
-    # 00:00 UTC Monday == 03:00 Europe/Sofia (summer) / 02:00 (winter).
-    # renovate.json's own `schedule` is what actually gates PR creation.
-    - cron: '0 0 * * 1'
+    # 02:00 UTC Monday, deliberately after the 00:00 build so the week's merged
+    # PRs are released as one tag before Renovate opens the next batch.
+    # This cron is the only scheduler - renovate.json carries no `schedule`,
+    # which would otherwise drift against it across DST.
+    - cron: '0 2 * * 1'
   workflow_dispatch:
     inputs:
       logLevel:
@@ -34,11 +36,10 @@ jobs:
       # step - Renovate clones the repo itself.
       - name: Run Renovate
         env:
-          # Renovate holds whole registry payloads in memory (bitnami's helm
-          # index.yaml is ~26MB of YAML). Node's default heap is ~half the
-          # container limit, which OOM-killed it. Scoped to this step so other
-          # Actions keep the default.
-          NODE_OPTIONS: --max-old-space-size=3072
+          # Node's default heap is ~half the container limit, which OOM-killed
+          # Renovate at the old 1Gi. Peak observed is ~960Mi. Scoped to this
+          # step so other Actions keep the default.
+          NODE_OPTIONS: --max-old-space-size=1536
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           # Without this Renovate falls back to renovate@whitesourcesoftware.com,
           # a Mend-owned account with Vigilant Mode on, which flags every commit

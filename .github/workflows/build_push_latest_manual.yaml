@@ -1,15 +1,62 @@
 name: MAIN - Build, Tag and Push 🚀 | DockerHub Registry
 
 on:
+  # Deliberately NOT push-triggered. Renovate merges land through the week and
+  # each one would otherwise cut its own tag, and then its own downstream PR in
+  # the infrastructure repo. Batching into one weekly build gives one tag per
+  # week regardless of how many PRs were merged.
+  schedule:
+    # 00:00 UTC Monday, before the 02:00 Renovate run in this same repo.
+    - cron: '0 0 * * 1'
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - 'Dockerfile'
+    inputs:
+      force:
+        description: Build even if the Dockerfile is unchanged since the last tag
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: build-push
+  cancel-in-progress: false
 
 jobs:
+  # Cheap gate so a quiet week costs one short job instead of a full
+  # build + Trivy scan + push.
+  check:
+    runs-on: gh-runner-image-runner
+    outputs:
+      changed: ${{ steps.check.outputs.changed }}
+      last_tag: ${{ steps.check.outputs.last_tag }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          # Full history + tags: git describe needs them to find the last release.
+          fetch-depth: '0'
+          ref: ${{ github.sha }}
+
+      - name: Has the Dockerfile changed since the last release?
+        id: check
+        run: |
+          LAST_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+          echo "last_tag=${LAST_TAG}" >> "$GITHUB_OUTPUT"
+          if [ -z "${LAST_TAG}" ]; then
+            echo "No previous tag found - building."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif git diff --quiet "${LAST_TAG}" HEAD -- Dockerfile; then
+            echo "Dockerfile unchanged since ${LAST_TAG} - nothing to release."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Dockerfile changed since ${LAST_TAG}:"
+            git diff --stat "${LAST_TAG}" HEAD -- Dockerfile
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
   build-and-push:
+    needs: check
+    # inputs.force is empty on a scheduled run, so this is just the gate then.
+    if: needs.check.outputs.changed == 'true' || inputs.force
     runs-on: gh-runner-image-runner
     # permissions:
     #   contents: write
@@ -41,7 +88,7 @@ jobs:
 
       - name: Docker Image Build
         run: |
-          echo "Building New version of ${{ github.repository_name }} image...⌛"
+          echo "Building New version of ${{ env.IMAGE_NAME }} image...⌛"
           docker buildx build --network host -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest .
           echo "Adding COMMIT HASH Tag to the image...⌛"
           docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_HASH }}
@@ -70,7 +117,7 @@ jobs:
 
       - name: Docker Image Tag and Push to Repository
         run: |
-          echo "Adding TAG version to ${{ github.repository_name }} image...⌛"
+          echo "Adding TAG version to ${{ env.IMAGE_NAME }} image...⌛"
           docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }}
 
           echo "Pushing New Image to Registry...⌛"
@@ -78,7 +125,7 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.new_tag }} &
           wait
           
-          echo "${{ github.repository_name }} new image successfully pushed! ✅"
+          echo "${{ env.IMAGE_NAME }} new image successfully pushed! ✅"
 
       - name: Build Changelog
         id: github_release

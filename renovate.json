@@ -1,38 +1,57 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":semanticCommits", ":dependencyDashboard"],
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":dependencyDashboard"
+  ],
   "timezone": "Europe/Sofia",
-  "schedule": ["before 3am on monday"],
-  "labels": ["dependencies", "renovate"],
-  "assignees": ["jimytar"],
+  "labels": [
+    "dependencies",
+    "renovate"
+  ],
+  "assignees": [
+    "jimytar"
+  ],
   "prConcurrentLimit": 4,
-
-  "enabledManagers": ["dockerfile", "github-actions", "custom.regex"],
-
+  "enabledManagers": [
+    "dockerfile",
+    "github-actions",
+    "custom.regex"
+  ],
   "customManagers": [
     {
       "customType": "regex",
       "description": "Tool versions pinned as ARGs, resolved via the '# renovate:' comment above each",
-      "managerFilePatterns": ["/(^|/)Dockerfile$/"],
+      "managerFilePatterns": [
+        "/(^|/)Dockerfile$/"
+      ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?\\s+ARG \\S+=\"?(?<currentValue>[^\"\\s]+)\"?"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ],
-
   "packageRules": [
     {
       "description": "Renovate itself needs Node >= 24, so keep the runner's Node on a current LTS line",
-      "matchDatasources": ["node-version"],
+      "matchDatasources": [
+        "node-version"
+      ],
       "groupName": "Node.js"
     },
     {
-      "matchPackageNames": ["hashicorp/terraform", "gruntwork-io/terragrunt"],
+      "matchPackageNames": [
+        "hashicorp/terraform",
+        "gruntwork-io/terragrunt"
+      ],
       "groupName": "Infrastructure Tools"
     },
     {
-      "matchPackageNames": ["kubernetes/kubernetes", "helm/helm"],
+      "matchPackageNames": [
+        "kubernetes/kubernetes",
+        "helm/helm"
+      ],
       "groupName": "Kubernetes Tools"
     },
     {
@@ -45,20 +64,32 @@
       "groupName": "Docker & GitHub Runner"
     },
     {
-      "description": "Major bumps of the toolchain change build behaviour - always review by hand",
-      "matchUpdateTypes": ["major"],
-      "labels": ["dependencies", "renovate", "breaking-change"],
-      "commitMessagePrefix": "feat!:"
+      "description": "Major bumps of the toolchain change build behaviour - always review by hand. The commitBody is load-bearing: the release workflow's tag action substring-matches the commit log for MAJOR_STRING_TOKEN='BREAKING CHANGE:', and 'feat!:' contains neither that nor 'feat:', so without it a major bump would be released as a patch.",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "labels": [
+        "dependencies",
+        "renovate",
+        "breaking-change"
+      ],
+      "commitMessagePrefix": "feat!:",
+      "commitBody": "BREAKING CHANGE: major toolchain version bump - review upstream upgrade notes before rolling this image out."
     },
     {
       "description": "Base image majors (debian) are a deliberate decision, not a routine bump",
-      "matchManagers": ["dockerfile"],
-      "matchUpdateTypes": ["major"],
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "enabled": false
     }
   ],
-
-  "vulnerabilityAlerts": { "enabled": true },
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
   "ignoreDeps": [],
   "ignorePaths": []
 }
