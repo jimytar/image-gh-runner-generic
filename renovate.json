@@ -64,7 +64,7 @@
       "groupName": "Docker & GitHub Runner"
     },
     {
-      "description": "Major bumps of the toolchain change build behaviour - always review by hand. The commitBody is load-bearing: the release workflow's tag action substring-matches the commit log for MAJOR_STRING_TOKEN='BREAKING CHANGE:', and 'feat!:' contains neither that nor 'feat:', so without it a major bump would be released as a patch.",
+      "description": "Major bumps of the toolchain change build behaviour - always review by hand. Scoped to the managers that actually change the image: the commitBody is load-bearing, because the release workflow's tag action substring-matches the commit log for MAJOR_STRING_TOKEN='BREAKING CHANGE:'. Left unscoped it would also catch github-actions majors, cutting a major IMAGE release for a CI-only change.",
       "matchUpdateTypes": [
         "major"
       ],
@@ -74,7 +74,19 @@
         "breaking-change"
       ],
       "commitMessagePrefix": "feat!:",
-      "commitBody": "BREAKING CHANGE: major toolchain version bump - review upstream upgrade notes before rolling this image out."
+      "commitBody": "BREAKING CHANGE: major toolchain version bump - review upstream upgrade notes before rolling this image out.",
+      "matchManagers": [
+        "custom.regex",
+        "dockerfile"
+      ]
+    },
+    {
+      "description": "Workflow action pins. 'ci:' matches none of the tag action's bump tokens, so these never influence the image version.",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "groupName": "GitHub Actions",
+      "commitMessagePrefix": "ci:"
     },
     {
       "description": "Base image majors (debian) are a deliberate decision, not a routine bump",
