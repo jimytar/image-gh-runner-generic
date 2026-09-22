@@ -3,7 +3,7 @@ FROM debian:trixie-slim
 ENV DEBIAN_FRONTEND=noninteractive
 ARG USER=runner
 # renovate: datasource=deb depName=docker-ce-cli versioning=deb
-ARG DOCKER_VERSION=29.8.0
+ARG DOCKER_VERSION=29.8.1
 # renovate: datasource=deb depName=docker-compose-plugin versioning=deb
 ARG DOCKER_COMPOSE_VERSION=5.5.1
 # renovate: datasource=github-releases depName=actions/runner extractVersion=^v(?<version>.*)$
