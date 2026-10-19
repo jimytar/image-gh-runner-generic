@@ -23,7 +23,7 @@ ARG KUBECTL=1.37.1
 # renovate: datasource=github-releases depName=asdf-vm/asdf extractVersion=^v(?<version>.*)$
 ARG ASDF=0.20.2
 # renovate: datasource=github-releases depName=helm/helm extractVersion=^v(?<version>.*)$
-ARG HELM=4.3.0
+ARG HELM=4.3.1
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
