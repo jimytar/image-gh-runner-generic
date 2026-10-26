@@ -3,11 +3,11 @@ FROM debian:trixie-slim
 ENV DEBIAN_FRONTEND=noninteractive
 ARG USER=runner
 # renovate: datasource=deb depName=docker-ce-cli versioning=deb
-ARG DOCKER_VERSION=29.9.1
+ARG DOCKER_VERSION=29.9.2
 # renovate: datasource=deb depName=docker-compose-plugin versioning=deb
-ARG DOCKER_COMPOSE_VERSION=5.6.0
+ARG DOCKER_COMPOSE_VERSION=5.6.1
 # renovate: datasource=github-releases depName=actions/runner extractVersion=^v(?<version>.*)$
-ARG RUNNER_VERSION=2.338.0
+ARG RUNNER_VERSION=2.338.1
 # renovate: datasource=github-releases depName=actions/runner-container-hooks extractVersion=^v(?<version>.*)$
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.8.1
 # renovate: datasource=node-version depName=node
