@@ -19,7 +19,7 @@ ARG TERRAFORM=1.17.0
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt extractVersion=^v(?<version>.*)$
 ARG TERRAGRUNT=1.2.1
 # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
-ARG KUBECTL=1.37.1
+ARG KUBECTL=1.37.2
 # renovate: datasource=github-releases depName=asdf-vm/asdf extractVersion=^v(?<version>.*)$
 ARG ASDF=0.20.2
 # renovate: datasource=github-releases depName=helm/helm extractVersion=^v(?<version>.*)$
