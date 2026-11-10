@@ -3,9 +3,9 @@ FROM debian:trixie-slim
 ENV DEBIAN_FRONTEND=noninteractive
 ARG USER=runner
 # renovate: datasource=deb depName=docker-ce-cli versioning=deb
-ARG DOCKER_VERSION=29.9.2
+ARG DOCKER_VERSION=29.9.3
 # renovate: datasource=deb depName=docker-compose-plugin versioning=deb
-ARG DOCKER_COMPOSE_VERSION=5.6.1
+ARG DOCKER_COMPOSE_VERSION=5.7.0
 # renovate: datasource=github-releases depName=actions/runner extractVersion=^v(?<version>.*)$
 ARG RUNNER_VERSION=2.338.2
 # renovate: datasource=github-releases depName=actions/runner-container-hooks extractVersion=^v(?<version>.*)$
