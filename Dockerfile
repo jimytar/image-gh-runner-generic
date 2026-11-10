@@ -45,6 +45,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     python3-venv \
     libicu-dev \
+    # Node.js >= 26 official binaries link against libatomic
+    libatomic1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up GitHub runner user
