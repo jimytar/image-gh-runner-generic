@@ -101,6 +101,7 @@ RUN asdf plugin add nodejs \
 # runner image is cached by kubelet per node, whereas the dind sidecar has no
 # persistent /var/lib/docker and would re-pull ~1.2GB on every run.
 RUN npm install -g --omit=dev renovate@${RENOVATE} \
+    && npm cache clean --force \
     && asdf reshim nodejs \
     && renovate --version
 

@@ -102,6 +102,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL'
+          timeout: '15m'
         continue-on-error: true
 
       - name: Bump version and push tag
