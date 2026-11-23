@@ -13,7 +13,7 @@ ARG RUNNER_CONTAINER_HOOKS_VERSION=0.8.1
 # renovate: datasource=node-version depName=node
 ARG NODE=26.13.0
 # renovate: datasource=github-releases depName=renovatebot/renovate
-ARG RENOVATE=44.222.5
+ARG RENOVATE=44.258.0
 # renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
 ARG TERRAFORM=1.17.1
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt extractVersion=^v(?<version>.*)$
